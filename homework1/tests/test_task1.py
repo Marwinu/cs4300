@@ -1,4 +1,4 @@
-from task1 import main
+from src.task1 import main
 
 def test_output(capsys):
     main()
