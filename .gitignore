@@ -1,8 +1,10 @@
 # Virtual environment
 hw1_env/
+myenv/
 
 # Python cache files
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
+db.sqlite3
