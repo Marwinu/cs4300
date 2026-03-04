@@ -8,3 +8,6 @@ __pycache__/
 *.pyo
 *.pyd
 db.sqlite3
+
+# Testing
+.coverage
