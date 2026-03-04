@@ -4,7 +4,7 @@ from .models import Movie, Seat, Booking
 
 class MovieModelTest(TestCase):
     def setUp(self):
-        # Before each test, create a test movie
+        """Before each test, create a test movie"""
         self.movie = Movie.objects.create(
             title="Generic Movie Title",
             description="Test Description",
@@ -13,24 +13,27 @@ class MovieModelTest(TestCase):
         )
 
     # Happy path - Movies
-    # Check for matching titles, description, duration, duration type
+
     def test_movie_title(self):
-        # Check matching titles
+        """Check for matching titles"""
         self.assertEqual(self.movie.title, "Generic Movie Title")
 
     def test_movie_desc(self):
+        """Check for matching description"""
         self.assertEqual(self.movie.description, "Test Description")
 
     def test_movie_duration(self):
+        """Check for matching duration"""
         self.assertEqual(self.movie.duration, 120)
 
     def test_movie_duration_int(self):
+        """Check duration is an integer"""
         self.assertIsInstance(self.movie.duration, int)
 
     # Edge cases - Movies
-    # Check for odd inputs 
+
     def test_movie_zero_dur(self):
-        # What if someone enters 0?
+        """What if someone enters 0 for duration?"""
         movie = Movie.objects.create(
             title="Short Movie",
             description="No duration",
@@ -40,7 +43,7 @@ class MovieModelTest(TestCase):
         self.assertEqual(movie.duration, 0)
 
     def test_movie_long_desc(self):
-        # What if a long description is entered?
+        """What if a long description is entered?"""
         long_desc = "LongMessage" * 200
         movie = Movie.objects.create(
             title="Long Desc Movie",
@@ -53,37 +56,42 @@ class MovieModelTest(TestCase):
 
 class SeatModelTest(TestCase):
     def setUp(self):
-        # Create a test seat
+        """Create a test seat"""
         self.seat = Seat.objects.create(
             seat_number=1,
             booking_status=False  # means seat is available
         )
 
     # Happy path - seat
-    # Checking seat number, booking status and booking status type
+
     def test_seat_num(self):
+        """Checking seat number"""
         self.assertEqual(self.seat.seat_number, 1)
 
     def test_seat_available(self):
+        """Checking booking status"""
         self.assertFalse(self.seat.booking_status)
 
     def test_seat_bool(self):
+        """Checking booking status type"""
         self.assertIsInstance(self.seat.booking_status, bool)
 
     # Edge cases - seat
+
     def test_seat_booked(self):
-        # Changing status of booking test
+        """Changing status of booking test"""
         self.seat.booking_status = True
         self.seat.save()  # saves data
-        self.assertTrue(self.seat.booking_status)  
+        self.assertTrue(self.seat.booking_status)
 
     def test_seat_num_int(self):
+        """Checking seat number is an integer"""
         self.assertIsInstance(self.seat.seat_number, int)
 
 
 class BookingModelTest(TestCase):
     def setUp(self):
-        # Bookings need a user, movie, and seat
+        """Bookings need a user, movie, and seat"""
         self.user = User.objects.create_user(
             username="bookinguser", password="pass123"
         )
@@ -104,23 +112,24 @@ class BookingModelTest(TestCase):
             user=self.user
         )
 
-    # Happy path - booking 
+    # Happy path - booking
+
     def test_booking_exists(self):
-        # Making sure the booking exists
+        """Making sure the booking exists"""
         self.assertIsNotNone(self.booking)
 
     def test_booking_movie(self):
-        # The booking should point to our test movie
+        """The booking should point to our test movie"""
         self.assertEqual(self.booking.movie.title, "Booking Test Movie")
 
     def test_booking_user(self):
-        # The booking should belong to bookinguser
+        """The booking should belong to bookinguser"""
         self.assertEqual(self.booking.user.username, "bookinguser")
 
     # Edge cases - booking
 
-    # tests creating another booking, with the same user
     def test_booking_multi(self):
+        """Tests creating another booking with the same user"""
         movie2 = Movie.objects.create(
             title="Scary Movie 2",
             description="Scary Desc",
@@ -136,8 +145,8 @@ class BookingModelTest(TestCase):
             seat=seat2,
             user=self.user  # same user
         )
-        # is there 2 bookings? 
+        # is there 2 bookings?
         bookings = Booking.objects.filter(user=self.user)
         self.assertEqual(len(bookings), 2)
 
-#TODO integration testing
+# TODO integration testing
