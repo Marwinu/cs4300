@@ -1,6 +1,9 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
 from .models import Movie, Seat, Booking
+from rest_framework.test import APIClient
+
+# Unit Testing ----
 
 class MovieModelTest(TestCase):
     def setUp(self):
@@ -149,4 +152,134 @@ class BookingModelTest(TestCase):
         bookings = Booking.objects.filter(user=self.user)
         self.assertEqual(len(bookings), 2)
 
-# TODO integration testing
+# Integration Testing ----
+
+class MovieAPITest(TestCase):
+    def setUp(self):
+        """Before each test, create an API client and test movie"""
+        self.client = APIClient()  # simulates API requests
+        self.movie = Movie.objects.create(
+            title="API Movie",
+            description="API Test",
+            release_date="2026-03-03",
+            duration=90
+        )
+
+    # Happy path - Movies API
+
+    def test_get_movies(self):
+        """Check GET /api/movies/ returns 200 OK"""
+        response = self.client.get('/api/movies/')  # send GET request
+        self.assertEqual(response.status_code, 200)  # 200 means success
+
+    def test_post_movie(self):
+        """Check POST /api/movies/ creates a new movie and returns 201"""
+        data = {
+            "title": "New Movie",
+            "description": "New Description",
+            "release_date": "2026-03-03",
+            "duration": 100
+        }
+        response = self.client.post('/api/movies/', data)  # send POST request
+        self.assertEqual(response.status_code, 201)  # 201 means created
+
+    def test_movies_json(self):
+        """Check the API returns JSON format not HTML"""
+        response = self.client.get('/api/movies/')  # send GET request
+        self.assertEqual(response['Content-Type'], 'application/json')  # check format is JSON
+
+
+class SeatAPITest(TestCase):
+    def setUp(self):
+        """Before each test, create an API client"""
+        self.client = APIClient()  # simulates API requests
+
+    # Happy path - Seats API
+
+    def test_get_seats(self):
+        """Check GET /api/seats/ returns 200 OK"""
+        response = self.client.get('/api/seats/')  # send GET request
+        self.assertEqual(response.status_code, 200)  # 200 means success
+
+    def test_post_seat(self):
+        """Check POST /api/seats/ creates a new seat and returns 201"""
+        data = {"seat_number": 5, "booking_status": False}
+        response = self.client.post('/api/seats/', data)  # send POST request
+        self.assertEqual(response.status_code, 201)  # 201 means created
+
+    def test_seats_json(self):
+        """Check the API returns JSON format not HTML"""
+        response = self.client.get('/api/seats/')  # send GET request
+        self.assertEqual(response['Content-Type'], 'application/json')  # check format is JSON
+
+
+class BookingAPITest(TestCase):
+    def setUp(self):
+        """Before each test, create an API client, user, movie and seat"""
+        self.client = APIClient()  # simulates API requests
+        self.user = User.objects.create_user(
+            username="testuser", password="pass123"
+        )
+        self.movie = Movie.objects.create(
+            title="API Movie",
+            description="API Test",
+            release_date="2026-03-03",
+            duration=90
+        )
+        self.seat = Seat.objects.create(
+            seat_number=1,
+            booking_status=False
+        )
+
+    # Happy path - Bookings API
+
+    def test_get_bookings(self):
+        """Check GET /api/bookings/ returns 200 OK"""
+        response = self.client.get('/api/bookings/')   # send GET request
+        self.assertEqual(response.status_code, 200)  # 200 means success
+
+    def test_post_booking(self):
+        """Check POST /api/bookings/ creates a new booking and returns 201"""
+        data = {
+            "movie": self.movie.id,
+            "seat": self.seat.id,
+            "user": self.user.id
+        }
+        response = self.client.post('/api/bookings/', data)  # send POST request
+        self.assertEqual(response.status_code, 201)  # 201 means created
+
+    def test_bookings_json(self):
+        """Check the API returns JSON format not HTML"""
+        response = self.client.get('/api/bookings/')  # send GET request
+        self.assertEqual(response['Content-Type'], 'application/json')  # check format is JSON
+
+
+class HTMLViewTest(TestCase):
+    def setUp(self):
+        """Before each test, create a user and movie for HTML view tests"""
+        self.client = APIClient()  # simulates requests
+        self.user = User.objects.create_user(
+            username="testuser", password="pass123"
+        )
+        self.movie = Movie.objects.create(
+            title="HTML Movie",
+            description="HTML Test",
+            release_date="2026-03-03",
+            duration=90
+        )
+
+    def test_movie_list_page(self):
+        """Check the movie list page loads correctly"""
+        response = self.client.get('/api/pages/movies/')  # send GET request
+        self.assertEqual(response.status_code, 200)  # 200 means page loaded
+
+    def test_seat_booking_page(self):
+        """Check the seat booking page loads for a valid movie"""
+        response = self.client.get(f'/api/pages/movies/{self.movie.id}/book/')  # send GET with movie id
+        self.assertEqual(response.status_code, 200)  # 200 means page loaded
+
+    def test_booking_history_page(self):
+        """Check the booking history page loads correctly"""
+        self.client.login(username="testuser", password="pass123")  # log in first
+        response = self.client.get('/api/pages/bookings/history/')  # send GET request
+        self.assertEqual(response.status_code, 200)  # 200 means page loaded
