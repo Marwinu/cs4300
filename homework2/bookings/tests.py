@@ -274,7 +274,8 @@ class HTMLViewTest(TestCase):
         self.assertEqual(response.status_code, 200)  # 200 means page loaded
 
     def test_seat_booking_page(self):
-        """Check the seat booking page loads for a valid movie"""
+        """Check the seat booking page loads for a valid movie, also logging in first"""
+        self.client.login(username="testuser", password="pass123")
         response = self.client.get(f'/api/pages/movies/{self.movie.id}/book/')  # send GET with movie id
         self.assertEqual(response.status_code, 200)  # 200 means page loaded
 
