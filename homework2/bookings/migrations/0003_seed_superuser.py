@@ -1,5 +1,6 @@
 from django.db import migrations
 
+# creates a admin login automatically
 def seed_superuser(apps, schema_editor):
     from django.contrib.auth.models import User
     if not User.objects.filter(username='admin').exists():
