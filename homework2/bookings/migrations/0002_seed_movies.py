@@ -57,4 +57,5 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunPython(seed_movies),
+        migrations.RunPython(seed_superuser),
     ]
