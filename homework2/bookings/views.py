@@ -23,6 +23,9 @@ def movie_list_view(request):
 
 
 def seat_booking_view(request, movie_id):
+    if not request.user.is_authenticated:
+        return redirect(f'/admin/login/?next=/api/pages/movies/{movie_id}/book/')
+
     movie = get_object_or_404(Movie, id=movie_id)
 
     if request.method == 'POST':
