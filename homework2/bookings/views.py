@@ -45,5 +45,7 @@ def seat_booking_view(request, movie_id):
 
 
 def booking_history_view(request):
+    if not request.user.is_authenticated:
+        return redirect('/admin/login/?next=/api/pages/bookings/history/')
     bookings = Booking.objects.filter(user=request.user)
     return render(request, 'bookings/booking_history.html', {'bookings': bookings})

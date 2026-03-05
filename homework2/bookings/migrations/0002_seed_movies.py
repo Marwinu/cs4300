@@ -40,6 +40,15 @@ def seed_movies(apps, schema_editor):
         duration=90
     )
 
+def seed_superuser(apps, schema_editor):
+    from django.contrib.auth.models import User
+    if not User.objects.filter(username='admin').exists():
+        User.objects.create_superuser(
+            username='admin',
+            password='admin123!',
+            email=''
+        )
+
 class Migration(migrations.Migration):
 
     dependencies = [
