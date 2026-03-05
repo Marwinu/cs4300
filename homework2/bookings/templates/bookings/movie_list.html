@@ -4,12 +4,19 @@
 
 {% block content %}
 <h2>Available Movies</h2>
+
+<!-- Boostrayp list group, displays movies as a card item-->
 <ul class="list-group">
 {% for movie in movies %}
+    <!-- Each movie being a list item-->
     <li class="list-group-item">
         <h5>{{ movie.title }}</h5>
         <p>{{ movie.description }}</p>
-        <p>Release Date: {{ movie.release_date }} | Duration: {{ movie.duration }} min</p>
+        <small class="text-muted">Release Date: {{ movie.release_date }}</small><br>
+        <small class="text-muted">Duration: {{ movie.duration }} min</small>
+        <br><br>
+
+          <!-- Book Now button links to seat booking page -->
         <a href="{% url 'book_seat' movie.id %}" class="btn btn-primary">Book Now</a>
     </li>
 {% endfor %}

@@ -4,6 +4,8 @@
 
 {% block content %}
 <h2>Current Booking History</h2>
+
+<!-- Bootstrap table  -->
 <table class="table">
     <thead>
         <tr>
@@ -13,10 +15,14 @@
         </tr>
     </thead>
     <tbody>
+    <!-- Loops through each booking and displays  -->
     {% for booking in bookings %}
         <tr>
+            <!-- Displays movie title  -->
             <td>{{ booking.movie.title }}</td>
+             <!-- Displays seat number  -->
             <td>{{ booking.seat.seat_number }}</td>
+             <!-- Displays booking date  -->
             <td>{{ booking.booking_date }}</td>
         </tr>
     {% endfor %}

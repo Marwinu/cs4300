@@ -3,13 +3,19 @@
 {% block title %}Book Seat{% endblock %}
 
 {% block content %}
+<!-- Shows the movie for booking-->
 <h2>Book Seat for {{ movie.title }}</h2>
 <form method="post">
+    <!-- Django security token! -->
     {% csrf_token %}
+
     <div class="mb-3">
+        <!-- Seat number input -->
         <label for="seat_number" class="form-label">Seat Number</label>
+        <!-- Number Input --> 
         <input type="number" class="form-control" id="seat_number" name="seat_number" min="1" required>
     </div>
+    <!-- Submit button -->
     <button type="submit" class="btn btn-success">Book Seat</button>
 </form>
 {% endblock %}
